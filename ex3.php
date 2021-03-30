@@ -11,8 +11,6 @@ $people = [
 ];
 
 
-
-
 /*
  * 1) Stampare li seguenti righe per ogni elemento di $people:
  *      Sofia is 31
