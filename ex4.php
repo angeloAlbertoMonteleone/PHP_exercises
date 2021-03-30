@@ -8,7 +8,6 @@ $temperatures = [78, 60, 62, 68, 71, 68, 73, 85, 66, 64, 76, 63, 75, 76, 73, 68,
 /*
  * 1) Calcolare e stampare:
  *      - la temperatura media
- *      - i 5 valori più bassi e i 5 valori più alti
  */
 
 $sum = 0;
@@ -18,33 +17,35 @@ foreach ($temperatures as $temperature) {
 }
 
 $elements = count($temperatures);
-if($elements > 0) {
+if ($elements > 0) {
     $average = $sum / $elements;
     echo sprintf("The temperature average is %s", number_format($average, 2));
-    
+
     echo "<br>";
     echo "<br>";
-    
+
+
+
+    // - i 5 valori più bassi e i 5 valori più alti
+
     echo "List of 5 lowest temperatures";
     echo "<br>";
 
 
     sort($temperatures);
-    for($i = 0; $i <= 4; $i++) {
-        echo sprintf("%s". ", ",$temperatures[$i]);
+    for ($i = 0; $i <= 4; $i++) {
+        echo sprintf("%s" . ", ", $temperatures[$i]);
     }
-    
+
     echo "<br>";
     echo "<br>";
-    
+
     echo "List of 5 highest temperatures";
     echo "<br>";
     $temperaturesInReverseOrder = array_reverse($temperatures);
-    for($i = 0; $i <= 4; $i++) {
-        echo sprintf("%s". ", ",$temperaturesInReverseOrder[$i]);
+    for ($i = 0; $i <= 4; $i++) {
+        echo sprintf("%s" . ", ", $temperaturesInReverseOrder[$i]);
     }
-    
 } else {
     echo "No elements found";
 }
-
