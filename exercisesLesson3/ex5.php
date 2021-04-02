@@ -94,15 +94,15 @@ echo "<br>";
  *  - aggiungere la chiave $cart[...]['percentage_weight'] che memorizza il peso percentuale di ogni item rispetto al totale di spesa, con valori tra 0 e 100
  */
 
-function modulePercentage(float $number1, float $number2): float
+
+function modulePercentage(float $number1, float $number2)
 {
-    return ($number1 * 100) / $number2;
+    $percentage = ($number1 * 100) / $number2;
+    return $percentage;
 }
 
-foreach ($cart as $values) {
-    foreach ($values as $key["price"] => $value) {
-        $percentage = modulePercentage($value, $totalPrice);
-        $values["percentage_weight"] = $percentage;
-        print_r($values);
-    }
+foreach ($cart as $key => $value) {
+    $percentageWeight = number_format(modulePercentage($value['price'], $totalPrice), 2);
+    $cart[$key]["percentage_weight"] = $percentageWeight;
 }
+print_r($cart);
