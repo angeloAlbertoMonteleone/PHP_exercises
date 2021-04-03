@@ -1,7 +1,6 @@
 <html>
     <body>
-        <?php require_once 'navbar.php';?>
+        <?php require_once 'menu.php';?>
     </body>
     <p>HOME</p>
 </html>
-
