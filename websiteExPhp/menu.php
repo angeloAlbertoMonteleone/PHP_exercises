@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
@@ -13,24 +15,35 @@
           <span class="navbar-toggler-icon"></span>
         </button>
 
+
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
-            
-            <a class="nav-link active" aria-current="page" href="chi-siamo.php">
-              CHI SIAMO
-            </a>
-            <a class="nav-link active" aria-current="page"href="homepage.php">
+
+            <a class="nav-link" aria-current="page"href="homepage.php">
                 HOME
+            </a>
+
+            <a class="nav-link" aria-current="page" href="chi-siamo.php">
+              CHI SIAMO
             </a>
 
             <a class="nav-link" href="contattaci.php">
               CONTATTACI
             </a>
-            <a class="nav-link" href="login.php">
-              LOGIN
-            </a>
 
+            <?php if(userIsAuthenticated() === true): ?>
+              <?php echo $_SESSION["username"]; ?>
+              ha fatto l`accesso
 
+              <a class="nav-link" href="logout.php">
+                LOGOUT
+              </a>
+            <?php else: ?>
+              <a class="nav-link" href="login.php">
+                LOGIN
+              </a>
+
+            <?php endif?>
           </div>
         </div>
       </div>
