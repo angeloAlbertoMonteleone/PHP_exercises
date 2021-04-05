@@ -1,0 +1,36 @@
+l`utente mario ha effettuato l`accesso
+l`utente alice ha effettuato l`accesso 
+ 
+l`utente mario ha effettuato l`accesso 
+ 
+l`utente alice ha effettuato il login 
+ 
+l`utente alice ha effettuato il login 
+L`utentealice ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+L`utente mario ha effettuato il logout 
+L`utente angelo ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente alice ha effettuato il login 
+L`utente alice ha effettuato il logout 
+l`utente mario ha effettuato il login 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente alice ha effettuato il login 
+L`utente alice ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente alice ha effettuato il login 
+L`utente alice ha effettuato il logout 
