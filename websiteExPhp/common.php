@@ -16,12 +16,12 @@ function loadUsers():array {
 function loadUsersFromJson():array
 {
   $content = file_get_contents("users.json");
-  $users = json_decode($content, true);
+  $user = json_decode($content, true);
 
-  if($users === null) {
-    echo "Impossibile caricare gli utenti", $users;
+    if($user === null) {
+      echo "Impossibile caricare gli utenti ", json_last_error_msg();
   }
-  return $users;
+  return $user;
 }
 
 // controlla se l user esiste ritornando true
@@ -34,8 +34,9 @@ function login(string $username, string $password)
   // users recuperati dal file users.csv
   // $users = loadUsers();
 
-  // users recuperati dal file users.csv
+  // users recuperati dal file users.json
   $users = loadUsersFromJson();
+
   // if($users === $usersFromJson) {
   //   var_dump(true);die;
   // }
@@ -60,22 +61,26 @@ function login(string $username, string $password)
   return sprintf("L` Utente %s non e` stato trovato" , $username);
 }
 
-
+// funzione che registra l` utente, aggiungendo un nuovo array dentro ad users array
 function register(string $username, string $password)
 {
-  $users = loadUsersFromJson();
+  $usersJson = loadUsersFromJson();
+  if(strlen($password) > 5) {
+    return "Inserire una password piu` lunga!";
+  }
+  foreach ($usersJson as $user) {
+    if($user["username"] === $username) {
+      return "Username gia` esistente, prova con un altro!";
+    }
+  }
 
-  var_dump($users);
-  echo "<br>";
-  echo "<br>";
-  echo "<br>";
-
-  $users[] = [
+  $usersJson[] = [
     "username" => $username,
     "password" => $password
   ];
 
-  file_get_contents("users.json", json_encode($users));
+  file_put_contents("users.json", json_encode($usersJson));
+  return true;
 }
 
 
