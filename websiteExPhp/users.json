@@ -1,10 +1,1 @@
-[{
-  "username": "mario",
-  "password": "rossi"
-}, {
-  "username": "alice",
-  "password": "verdi"
-}, {
-  "username": "luca",
-  "password": "bianchi"
-}, ]
+[{"username":"mario","password":"rossi"},{"username":"alice","password":"verdi"},{"username":"luca","password":"bianchi"},{"username":"angelo","password":"angelo"},{"username":"michele ","password":"michele"},{"username":"michele","password":"michele"},{"username":"marco ","password":"marco"},{"username":"marco","password":"marco"}]
