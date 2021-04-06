@@ -34,3 +34,12 @@ l`utente mario ha effettuato il login
 L`utente mario ha effettuato il logout 
 l`utente alice ha effettuato il login 
 L`utente alice ha effettuato il logout 
+l`utente alice ha effettuato il login 
+L`utente alice ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente angelo ha effettuato il login 
+L`utente angelo ha effettuato il logout 
+l`utente michele ha effettuato il login 
+L`utente michele ha effettuato il logout 
+l`utente marco ha effettuato il login 
