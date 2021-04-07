@@ -23,7 +23,7 @@ class userAuthentication
     // $users = loadUsers();
 
     // users recuperati dal file users.json
-    $users = loadUsersFromJson();
+    $users = $this->loadUsersFromJson();
     // if($users === $usersFromJson) {
     //   var_dump(true);die;
     // }
@@ -32,7 +32,7 @@ class userAuthentication
       $currentPassword = $user["password"];
 
       if($username === $currentUser) {
-          if($password === $currentPassword) {
+          if(cryptPassword($password, $user["crypt_algorithm"]) === $currentPassword) {
           // imposto una variabile di sessione
           $_SESSION["username"] = $username;
 
@@ -54,22 +54,64 @@ class userAuthentication
   * funzione che registra l` utente, aggiungendo un nuovo array dentro ad users array */
   public function register(string $username, string $password):bool
   {
-    $usersJson = loadUsersFromJson();
+    $usersFromJson = $this->loadUsersFromJson();
     if(strlen($password) < 5) {
       throw new \Exception("Inserire una password piu` lunga!");
     }
-    foreach ($usersJson as $user) {
+    foreach ($usersFromJson as $user) {
       if($user["username"] === $username) {
         throw new \Exception("Username gia` esistente, prova con un altro!");
       }
     }
 
-    $usersJson[] = [
+    $passwordAlgorithm = $this->registerPasswordAlgorithm();
+
+    $usersFromJson[] = [
       "username" => $username,
-      "password" => $password
+      "password" => $this->cryptPassword($password, $passwordAlgorithm),
+      "crypt_algorithm" => $passwordAlgorithm
     ];
 
-    file_put_contents("users.json", json_encode($usersJson));
+    file_put_contents("users.json", json_encode($usersFromJson));
     return true;
   }
+
+
+// funzione che registra su ogni utente l`algoritmo della password;
+private function registerPasswordAlgorithm() {
+  return "md5";
+}
+
+// funzione che cripta la password in base all` algortimo della password posseduta dall` utente
+private function cryptPassword($password, $algorithm) {
+  if($algorithm === "md5") {
+    return md5($password);
+  }
+  if($algorithm === "sha1") {
+    return sha1($password);
+  }
+  throw new \Exception("algorithm della password non trovato");
+}
+
+
+
+
+/**
+@return array
+* estrapola gli utenti dal file users.json e ritorna gli users in un array di oggetti(decodificati in arrays)
+*/
+  private function loadUsersFromJson():array
+  {
+    if(!file_exists("users.json")){
+      return [];
+    }
+    $content = file_get_contents("users.json");
+    $user = json_decode($content, true);
+
+      if($user === null) {
+        echo "Impossibile caricare gli utenti ", json_last_error_msg();
+    }
+    return $user;
+  }
+
 }
