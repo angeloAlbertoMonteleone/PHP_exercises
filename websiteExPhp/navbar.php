@@ -20,7 +20,7 @@
               CONTATTACI
             </a>
 
-            <?php if(userIsAuthenticated() === true): ?>
+            <?php if($uthenticationProvider->userIsAuthenticated() === true): ?>
               <a class="nav-link" href="logout.php">
                 <?php echo $_SESSION["username"]; ?> ha fatto l`accesso (LOGOUT)
               </a>
@@ -29,11 +29,10 @@
                 LOGIN
               </a>
 
+              <a class="nav-link" href="register.php">
+                REGISTER
+              </a>
             <?php endif?>
-
-            <a class="nav-link" href="register.php">
-              REGISTER
-            </a>
           </div>
         </div>
       </div>
