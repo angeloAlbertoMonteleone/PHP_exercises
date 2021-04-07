@@ -1,16 +1,28 @@
 <?php require_once("common.php"); ?>
 
 <?php
-if(userIsAuthenticated() === true) {
+
+if($uthenticationProvider->userIsAuthenticated() === true) {
         header("location: homepage.php");
 }
 
 // instanzio le credenziali degli utenti, username e password, e salvo in una variabile di sessione l username, per utilizzarlo nel mio HTML
 if($_SERVER["REQUEST_METHOD"] === "POST") {
-    $registrationIsSuccessful = register($_POST["username"],$_POST["password"]);
+  $error = false;
+  try {
+    $registrationIsSuccessful = $uthenticationProvider->register($_POST["username"],$_POST["password"]);
+  } catch (\Exception $e) {
+    $error = $e->getMessage();
+    $registrationIsSuccessful = false;
+  }
 
     if($registrationIsSuccessful === true) {
-        header("location: login.php");
+      try {
+        $uthenticationProvider->login($_POST["username"],$_POST["password"]);
+      } catch (\Exception $e) {
+
+      }
+      return header("location: homepage.php");
     }
 }
 ?>
@@ -26,7 +38,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST") {
             <div class="col-md-12">
               <?php if ($registrationIsSuccessful !== true): ?>
                 <p style="color: red">
-                  <?php echo $registrationIsSuccessful ?>
+                  <?php echo $error ?>
                 </p>
               <?php endif; ?>
 
