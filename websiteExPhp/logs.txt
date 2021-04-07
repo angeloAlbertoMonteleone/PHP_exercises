@@ -66,3 +66,7 @@ L`utente giuseppe ha effettuato il logout
 l`utente giuseppe ha effettuato il login 
 L`utente giuseppe ha effettuato il logout 
 l`utente mario ha effettuato il login 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
