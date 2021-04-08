@@ -1,6 +1,6 @@
 <?php require_once("common.php"); ?>
 
-<?php if(userIsAuthenticated() !== true) {
+<?php if($authenticationProvider->userIsAuthenticated() !== true) {
     header("location: login.php");
 }
 ?>
