@@ -11,6 +11,14 @@ class userAuthentication
   }
 
 
+public function getAuthenticatedUsername():string {
+  if(!$this->userIsAuthenticated()) {
+    throw new \Exception("L` utente non e` autenticato");
+  }
+  return $_SESSION["username"];
+}
+
+
 
   /**
   return @bool
@@ -27,12 +35,14 @@ class userAuthentication
     // if($users === $usersFromJson) {
     //   var_dump(true);die;
     // }
+
+
     foreach ($users as $user) {
       $currentUser = $user["username"];
       $currentPassword = $user["password"];
 
       if($username === $currentUser) {
-          if(cryptPassword($password, $user["crypt_algorithm"]) === $currentPassword) {
+          if($this->cryptPassword($password, $user["crypt_algorithm"]) === $currentPassword) {
           // imposto una variabile di sessione
           $_SESSION["username"] = $username;
 
@@ -79,8 +89,9 @@ class userAuthentication
 
 // funzione che registra su ogni utente l`algoritmo della password;
 private function registerPasswordAlgorithm() {
-  return "md5";
+  return "sha1";
 }
+
 
 // funzione che cripta la password in base all` algortimo della password posseduta dall` utente
 private function cryptPassword($password, $algorithm) {
@@ -94,6 +105,20 @@ private function cryptPassword($password, $algorithm) {
 }
 
 
+// funzione per cambiare password
+public function changePassword($username, $newPassword) {
+  $users = $this->loadUsersFromJson();
+
+  foreach ($users as $key => $user) {
+    if($user["username"] === $username){
+      $users[$key]["password"] = $this->cryptPassword($newPassword,$this->registerPasswordAlgorithm());
+      $users[$key]["crypt_algorithm"] = $this->registerPasswordAlgorithm();
+      }
+    }
+
+    file_put_contents("users.json", json_encode($users));
+    return true;
+}
 
 
 /**
