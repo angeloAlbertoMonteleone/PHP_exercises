@@ -7,7 +7,7 @@ require_once("./class/userAuthentication.php");
 require_once("utilities.php");
 
 // nuovo oggetto instanziato dentro la classe userAuthentication
-$uthenticationProvider = new userAuthentication();
+$authenticationProvider = new userAuthentication();
 
 
 
