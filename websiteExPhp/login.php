@@ -2,20 +2,19 @@
 
 <?php
 
+$error = false;
+$loginSuccessful = false;
 
 // instanzio le credenziali degli utenti, username e password, e salvo in una variabile di sessione l username, per utilizzarlo nel mio HTML
 if($_SERVER["REQUEST_METHOD"] === "POST") {
-    $error = false;
+    $username = $_POST["username"];
+    $password = $_POST["password"];
     try {
-      $username = $_POST["username"];
-      $password = $_POST["password"];
-
-      $loginSuccessful = $uthenticationProvider->login($username, $password);
+      $loginSuccessful = $authenticationProvider->login($username, $password);
     } catch (\Exception $e) {
       $error = $e->getMessage();
       $loginSuccessful = false;
     }
-
     if($loginSuccessful === true) {
         header("location: homepage.php");
     }
@@ -38,7 +37,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST") {
               <?php endif; ?>
 
               <form action="login.php" method="POST">
-                  <?php if ($uthenticationProvider->userIsAuthenticated() === true):?>
+                  <?php if ($authenticationProvider->userIsAuthenticated() === true):?>
                     <p>Sei loggato!</p>
                   <?php endif; ?>
 
