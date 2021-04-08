@@ -20,9 +20,12 @@
               CONTATTACI
             </a>
 
-            <?php if($uthenticationProvider->userIsAuthenticated() === true): ?>
+            <?php if($authenticationProvider->userIsAuthenticated() === true): ?>
               <a class="nav-link" href="logout.php">
                 <?php echo $_SESSION["username"]; ?> ha fatto l`accesso (LOGOUT)
+              </a>
+              <a class="nav-link" href="change-password.php">
+                CAMBIA PASSWORD
               </a>
             <?php else: ?>
               <a class="nav-link" href="login.php">
