@@ -1,5 +1,7 @@
 <?php
 
+require_once "userManager.php";
+
 class userAuthentication
 {
 
@@ -27,22 +29,23 @@ public function getAuthenticatedUsername():string {
   */
   public function login(string $username, string $password): bool
   {
+
+    $userManager = new userManager();
     // users recuperati dal file users.csv
     // $users = loadUsers();
 
     // users recuperati dal file users.json
-    $users = $this->loadUsersFromJson();
+    $users = $userManager->loadUsersFromJson();
     // if($users === $usersFromJson) {
     //   var_dump(true);die;
     // }
+    foreach ($users as $key => $user) {
+      $currentUser = $user->getUsername();
+      $currentCryptedPassword = $user->getPassword();
 
-
-    foreach ($users as $user) {
-      $currentUser = $user["username"];
-      $currentPassword = $user["password"];
 
       if($username === $currentUser) {
-          if($this->cryptPassword($password, $user["crypt_algorithm"]) === $currentPassword) {
+          if($this->cryptPassword($password, $user->getPasswordAlgorithm()) === $currentCryptedPassword) {
           // imposto una variabile di sessione
           $_SESSION["username"] = $username;
 
@@ -62,28 +65,36 @@ public function getAuthenticatedUsername():string {
   @param string $username
   @param string $password
   * funzione che registra l` utente, aggiungendo un nuovo array dentro ad users array */
-  public function register(string $username, string $password):bool
+  public function register(string $username,string $password):bool
   {
-    $usersFromJson = $this->loadUsersFromJson();
+
     if(strlen($password) < 5) {
       throw new \Exception("Inserire una password piu` lunga!");
     }
+
+    $userManager = new userManager();
+    $usersFromJson = $userManager->loadUsersFromJson();
+
     foreach ($usersFromJson as $user) {
-      if($user["username"] === $username) {
+
+      if($user->getUsername() === $username) {
         throw new \Exception("Username gia` esistente, prova con un altro!");
       }
     }
 
-    $passwordAlgorithm = $this->registerPasswordAlgorithm();
+      $passwordAlgorithm = $this->registerPasswordAlgorithm();
+      $cryptPassword = $this->cryptPassword($password, $passwordAlgorithm);
 
-    $usersFromJson[] = [
-      "username" => $username,
-      "password" => $this->cryptPassword($password, $passwordAlgorithm),
-      "crypt_algorithm" => $passwordAlgorithm
-    ];
+      $userManager->addUserInDb(
+        $username,
+        $cryptPassword,
+        $passwordAlgorithm
+        );
 
-    file_put_contents("users.json", json_encode($usersFromJson));
+        printLog("L`utente ha effettuato la registrazione");
+
     return true;
+
   }
 
 
@@ -106,37 +117,22 @@ private function cryptPassword($password, $algorithm) {
 
 
 // funzione per cambiare password
-public function changePassword($username, $newPassword) {
-  $users = $this->loadUsersFromJson();
+public function changePassword($oldPassword, $newPassword) {
 
-  foreach ($users as $key => $user) {
-    if($user["username"] === $username){
-      $users[$key]["password"] = $this->cryptPassword($newPassword,$this->registerPasswordAlgorithm());
-      $users[$key]["crypt_algorithm"] = $this->registerPasswordAlgorithm();
-      }
-    }
+    $userManager = new userManager();
+    $users = $userManager->loadUsersFromJson();
 
-    file_put_contents("users.json", json_encode($users));
+    $algorithm =  $this->registerPasswordAlgorithm();
+    $newCryptedPassword = $this->cryptPassword($newPassword, $algorithm);
+    $oldPasswordCrypted = $this->cryptPassword($oldPassword, $algorithm);
+
+    $userManager->updatePassword($users, $_SESSION["username"], $oldPasswordCrypted, $newCryptedPassword, $algorithm);
+
     return true;
 }
 
 
-/**
-@return array
-* estrapola gli utenti dal file users.json e ritorna gli users in un array di oggetti(decodificati in arrays)
-*/
-  private function loadUsersFromJson():array
-  {
-    if(!file_exists("users.json")){
-      return [];
-    }
-    $content = file_get_contents("users.json");
-    $user = json_decode($content, true);
-
-      if($user === null) {
-        echo "Impossibile caricare gli utenti ", json_last_error_msg();
-    }
-    return $user;
-  }
 
 }
+
+?>
