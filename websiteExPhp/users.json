@@ -1,9 +1,1 @@
-[{
-  "username": "mario",
-  "password": "7a4ba92c07cb17aa2f2ab15496fa4592",
-  "crypt_algorithm": "md5"
-}, {
-  "username": "angelo",
-  "password": "e36592e8db31bbf66feda4093ca766fe51fceea0",
-  "crypt_algorithm": "sha1"
-}]
+[{"username":"mario","password":"addb47291ee169f330801ce73520b96f2eaf20ea","crypt_algorithm":"sha1"},{"username":"angelo","password":"d489b904fec03b850597df49e1e32fcdb1a7a7f4","crypt_algorithm":"sha1"},{"username":"alice","password":"522b276a356bdf39013dfabea2cd43e141ecc9e8","crypt_algorithm":"sha1"}]
