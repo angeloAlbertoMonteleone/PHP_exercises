@@ -8,11 +8,13 @@ if($_SERVER["REQUEST_METHOD"] === "POST") {
   // instanzio le credenziali degli utenti, oldPassword e newPassword, e salvo in una variabile di sessione la nuova password
     try {
       $username = $authenticationProvider->getAuthenticatedUsername();
+
+      $changeSuccessful = $authenticationProvider->changePassword($_POST["oldPassword"], $_POST["newPassword"]);
+
     } catch (\Exception $e) {
       $error = $e->getMessage();
     }
 
-    $changeSuccessful = $authenticationProvider->changePassword($_POST["oldPassword"], $_POST["newPassword"]);
 
     if($changeSuccessful === true) {
         header("location: homepage.php");
@@ -29,11 +31,16 @@ if($_SERVER["REQUEST_METHOD"] === "POST") {
         <div class="container">
           <div class="row">
             <div class="col-md-12">
+              <?php if(isset($error) === true):?>
+
+                <p><?php echo $error ?></p>
+
+              <?php endif ?>
+
               <?php if($changeSuccessful === true):?>
 
-                <p>Password aggiornata correttamente!</p>
-
-                <?php else: ?>
+                <p>Password correttamente cambiata</p>
+              <?php endif ?>
 
               <form action="change-password.php" method="POST">
 
@@ -49,8 +56,6 @@ if($_SERVER["REQUEST_METHOD"] === "POST") {
 
                 <button type="submit" class="btn btn-primary">Cambia Password</button>
               </form>
-
-            <?php endif ?>
 
             </div>
           </div>
