@@ -30,45 +30,40 @@ public function getAuthenticatedUsername():string {
   public function login(string $username, string $password): bool
   {
 
-    $userManager = new userManager();
-    // users recuperati dal file users.csv
-    // $users = loadUsers();
+      $userManager = new userManager();
+      // users recuperati dal file users.csv
+      // $users = loadUsers();
 
-    // users recuperati dal file users.json
-    $users = $userManager->loadUsersFromJson();
-    // if($users === $usersFromJson) {
-    //   var_dump(true);die;
-    // }
-    foreach ($users as $key => $user) {
-      $currentUser = $user->getUsername();
-      $currentCryptedPassword = $user->getPassword();
+      $user = $userManager->findUser($username, $password);
 
+      // users recuperati dal file users.json
+      // $users = $userManager->loadUsersFromJson();
+      // if($users === $usersFromJson) {
+      //   var_dump(true);die;
+      // }
 
-      if($username === $currentUser) {
-          if($this->cryptPassword($password, $user->getPasswordAlgorithm()) === $currentCryptedPassword) {
-          // imposto una variabile di sessione
-          $_SESSION["username"] = $username;
+        // imposto una variabile di sessione
+        $_SESSION["username"] = $user->getUsername();
 
-          // scrivo un log
-          printLog(sprintf("l`utente %s ha effettuato il login", $username));
-          return true;
-        }
-          // potrei non mettere il return, e gestire due errori nel prossimo return, fuori
-          throw new \Exception(sprintf("La password non e` corretta, riprova!"));
-      }
-    }
-    throw new \Exception(sprintf("L` Utente %s non e` stato trovato" , $username));
+        // scrivo un log
+        printLog(sprintf("l`utente %s ha effettuato il login", $user->getUsername()));
+        return true;
+      //     // potrei non mettere il return, e gestire due errori nel prossimo return, fuori
+      //     throw new \Exception(sprintf("La password non e` corretta, riprova!"));
+      // }
   }
+
+
 
 
   /**
   @param string $username
   @param string $password
   * funzione che registra l` utente, aggiungendo un nuovo array dentro ad users array */
-  public function register(string $username,string $password):bool
+  public function register(string $username,string $plainPassword):bool
   {
 
-    if(strlen($password) < 5) {
+    if(strlen($plainPassword) < 5) {
       throw new \Exception("Inserire una password piu` lunga!");
     }
 
@@ -76,19 +71,14 @@ public function getAuthenticatedUsername():string {
     $usersFromJson = $userManager->loadUsersFromJson();
 
     foreach ($usersFromJson as $user) {
-
       if($user->getUsername() === $username) {
         throw new \Exception("Username gia` esistente, prova con un altro!");
       }
     }
 
-      $passwordAlgorithm = $this->registerPasswordAlgorithm();
-      $cryptPassword = $this->cryptPassword($password, $passwordAlgorithm);
-
       $userManager->addUserInDb(
         $username,
-        $cryptPassword,
-        $passwordAlgorithm
+        $plainPassword
         );
 
         printLog("L`utente ha effettuato la registrazione");
@@ -98,35 +88,18 @@ public function getAuthenticatedUsername():string {
   }
 
 
-// funzione che registra su ogni utente l`algoritmo della password;
-private function registerPasswordAlgorithm() {
-  return "sha1";
-}
 
-
-// funzione che cripta la password in base all` algortimo della password posseduta dall` utente
-private function cryptPassword($password, $algorithm) {
-  if($algorithm === "md5") {
-    return md5($password);
-  }
-  if($algorithm === "sha1") {
-    return sha1($password);
-  }
-  throw new \Exception("algorithm della password non trovato");
-}
 
 
 // funzione per cambiare password
-public function changePassword($oldPassword, $newPassword) {
+public function changePassword($oldPassword, $newPlainPassword):bool
+{
 
     $userManager = new userManager();
     $users = $userManager->loadUsersFromJson();
 
-    $algorithm =  $this->registerPasswordAlgorithm();
-    $newCryptedPassword = $this->cryptPassword($newPassword, $algorithm);
-    $oldPasswordCrypted = $this->cryptPassword($oldPassword, $algorithm);
 
-    $userManager->updatePassword($users, $_SESSION["username"], $oldPasswordCrypted, $newCryptedPassword, $algorithm);
+    $userManager->updatePassword($users, $_SESSION["username"], $oldPassword, $newPlainPassword);
 
     return true;
 }
