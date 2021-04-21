@@ -7,13 +7,13 @@ class user
 
   private $username;
   private $password;
-  private $passwordalgorithm;
+  // private $passwordalgorithm;
 
-  public function __construct(string $username, string $password, string $passwordalgorithm)
+  public function __construct(string $username, string $password)
   {
     $this->username = $username;
     $this->password = $password;
-    $this->passwordalgorithm = $passwordalgorithm;
+    // $this->passwordalgorithm = $passwordalgorithm;
   }
 
   public function getUsername() {
@@ -23,18 +23,18 @@ class user
   public function getPassword() {
     return $this->password;
   }
-
-  public function getPasswordAlgorithm() {
-    return $this->passwordalgorithm;
-  }
+  //
+  // public function getPasswordAlgorithm() {
+  //   return $this->passwordalgorithm;
+  // }
 
   public function setCryptedPassword(string $cryptedPassword) {
     $this->password = $cryptedPassword;
   }
-
-  public function setAlgorithm(string $algorithm) {
-    $this->passwordalgorithm = $algorithm;
-  }
+  //
+  // public function setAlgorithm(string $algorithm) {
+  //   $this->passwordalgorithm = $algorithm;
+  // }
 
 
 }
