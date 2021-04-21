@@ -8,7 +8,7 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
           <div class="navbar-nav">
 
-            <a class="nav-link" aria-current="page"href="homepage.php">
+            <a class="nav-link" aria-current="page" href="homepage.php">
                 HOME
             </a>
 
@@ -27,6 +27,11 @@
               <a class="nav-link" href="change-password.php">
                 CAMBIA PASSWORD
               </a>
+
+              <a class="nav-link" href="create-post.php">
+                SCRIVI POST
+              </a>
+
             <?php else: ?>
               <a class="nav-link" href="login.php">
                 LOGIN
