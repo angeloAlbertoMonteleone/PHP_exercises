@@ -29,8 +29,8 @@ public function loadUsersFromJson():array
   foreach ($users as $key => $user) {
     $output[] = new user(
       $user["username"],
-      $user["password"],
-      $user["crypt_algorithm"]
+      $user["password"]
+      // $user["crypt_algorithm"]
     );
     // // $output = new user(
     // //   $user["username"],
@@ -53,13 +53,11 @@ public function addUserInDb(string $username, string $plainPassword) {
 
       $users = $this->loadUsersFromJson();
 
-      $passwordAlgorithm = $this->registerPasswordAlgorithm();
-      $cryptPassword = $this->cryptPassword($plainPassword, $passwordAlgorithm);
+      $cryptPassword = $this->cryptPasswordWithAlgorithm($plainPassword);
 
       $users[] = new user(
         $username,
-        $cryptPassword,
-        $passwordAlgorithm
+        $cryptPassword
       );
 
       $this->updateUsersFile($users);
@@ -89,8 +87,7 @@ private function updateUsersFile(array $array) {
   foreach ($array as $user) {
     $output[] = [
       "username" => $user->getUsername(),
-      "password" => $user->getPassword(),
-      "crypt_algorithm" => $user->getPasswordAlgorithm()
+      "password" => $user->getPassword()
     ];
 
   }
@@ -108,14 +105,15 @@ public function findUser(string $username, string $plainPassword): user
   /* verifica se l utente esiste, se no lancia un eccezione*/
     $user = $this->findUserByUsername($username);
 
-    $cryptedAlgorithm = $this->registerPasswordAlgorithm();
 
-    $cryptPassword = $this->cryptPassword($plainPassword, $cryptedAlgorithm);
-
-    if($cryptPassword === $user->getPassword()) {
+    if(password_verify($plainPassword, $user->getPassword())){
       return $user;
-    }
+    };
 
+    // $cryptedAlgorithm = $this->registerPasswordAlgorithm();
+    // $cryptPassword = $this->cryptPassword($plainPassword, $cryptedAlgorithm);
+    // if($cryptPassword === $user->getPassword()) {
+    // }
 
     throw new \Exception(sprintf("Utente con username %s non trovato",$username));
 
@@ -141,12 +139,9 @@ public function findUserByUsername(string $username): user {
 public function updatePassword(array $users, $username, string $oldPassword, string $plainPassword)
 {
       $user = $this->findUser($username, $oldPassword);
-      var_dump($oldPassword);
 
-      $currentCryptAlgorithm = $this->registerPasswordAlgorithm();
-
-      $oldPasswordCrypted = $this->cryptPassword($oldPassword, $currentCryptAlgorithm);
-
+      // $currentCryptAlgorithm = $this->registerPasswordAlgorithm();
+      // $oldPasswordCrypted = $this->cryptPasswordWithAlgorithm($oldPassword);
       //
       // foreach ($users as $user) {
       //   if($user->getUsername() === $username){
@@ -154,11 +149,11 @@ public function updatePassword(array $users, $username, string $oldPassword, str
             // $users[$key]["password"] = $authenticationProvider->cryptPassword($newPassword, $authenticationProvider->registerPasswordAlgorithm());
             // $users[$key]["crypt_algorithm"] = $authenticationProvider->registerPasswordAlgorithm();
 
-      $cryptNewPassword = $this->cryptPassword($plainPassword,$currentCryptAlgorithm);
+      $cryptNewPassword = $this->cryptPasswordWithAlgorithm($plainPassword);
 
       $user->setCryptedPassword($cryptNewPassword);
 
-      $user->setAlgorithm($currentCryptAlgorithm);
+      // $user->setAlgorithm($currentCryptAlgorithm);
 
       $this->updateUser($user);
 
@@ -195,8 +190,12 @@ private function cryptPassword($password, $algorithm) {
 
 
 // funzione che registra su ogni utente l`algoritmo della password;
-private function registerPasswordAlgorithm() {
-  return "sha1";
+// private function registerPasswordAlgorithm() {
+//   return "sha1";
+// }
+
+public function cryptPasswordWithAlgorithm(string $plainPassword) {
+  return password_hash($plainPassword, PASSWORD_DEFAULT);
 }
 
 }
