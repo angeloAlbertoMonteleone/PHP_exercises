@@ -3,16 +3,13 @@
 session_start();
 
 require_once("../class/userAuthentication.php");
-
+require_once("../class/post.php");
+require_once("../class/blogManager.php");
 require_once("utilities.php");
 
 // nuovo oggetto instanziato dentro la classe userAuthentication
 $authenticationProvider = new userAuthentication();
- 
-
-
-
-
+$blogManager = new blogManager();
 
 
 
