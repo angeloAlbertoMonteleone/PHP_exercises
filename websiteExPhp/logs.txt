@@ -94,3 +94,20 @@ L`utente angelo ha effettuato il logout
 L`utente ha effettuato la registrazione 
 l`utente angelo ha effettuato il login 
 L`utente angelo ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+L`utente ha effettuato la registrazione 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente alberta ha effettuato il login 
+L`utente alberta ha effettuato il logout 
+L`utente ha effettuato la registrazione 
+l`utente mario ha effettuato il login 
+L`utente mario ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L` mario ha cambiato la password 
+L`utente mario ha effettuato il logout 
+l`utente mario ha effettuato il login 
+L` mario ha cambiato la password 
+L`utente mario ha effettuato il logout 
+l`utente mario ha effettuato il login 
