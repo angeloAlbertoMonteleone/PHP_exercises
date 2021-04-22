@@ -13,8 +13,13 @@ if($_SERVER["REQUEST_METHOD"] === "POST") {
     $postTitle = $_POST["title"];
     $postContent = $_POST["post"];
 
+    $user = $authenticationProvider->getAuthenticatedUsername();
     try {
-      $post = $blogManager->addPost($postTitle, $postContent);
+      $post = $blogManager->addPost(
+        $postTitle,
+        $postContent,
+        $user
+        );
     } catch (\Exception $e) {
       $error = $e->getMessage();
     }
