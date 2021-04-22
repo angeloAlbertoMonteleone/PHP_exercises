@@ -7,33 +7,42 @@ require_once "Post.php";
 class blogManager
 {
 
+  /**
+  *@return array
+  * file che ristituisce l`array dei posts
+  */
   public function getPost(): array
   {
-    return $this->loadPosts();
+    $posts = $this->loadPosts();
+    return array_reverse($posts);
   }
 
 
-  public function addPost($title, $content): Post
+
+  /**
+  *@return Post
+  * file che legge i posts su loadPost(),e fa l update su updatePost()
+  */
+  public function addPost($title, $content, user $user = null): Post
   {
-    $post = new Post($title, $content);
+    // istanzia un nuovo oggetto post
+    $post = new Post($title, $content, new DateTime('now'));
+
+    // $username = $user->getUsername();
+    // se avevessi avuto un og user avrei fatto, $post->setAuthorUsername($user->getUsername)
+    if($user !== null) {
+      $post->setAuthorUsername($user->getUsername());
+    }
 
     $posts = $this->loadPosts();
-
+    // aggiunge un nuovo post
     $posts[] = $post;
-
+    // aggiorna i post nel file
     $this->updatePosts($posts);
+
     return $post;
   }
 
-
-
-  /*prende la path assoluta del posts.json*/
-  public function getPostsPathAbsolute() {
-    $root = $_SERVER["DOCUMENT_ROOT"];
-    $postPath = sprintf('%s/websiteExPhp/posts.json',$root);
-
-    return $postPath;
-  }
 
 
 
@@ -59,10 +68,16 @@ class blogManager
 
   // costruisce un array di oggetti post
     foreach ($posts as $key => $post) {
+      $creationDate = DateTime::createFromFormat("Y-m-d H:i:s", $post["creation_date"]);
       $postsObjects = new Post(
         $post["title"],
-        $post["content"]
+        $post["content"],
+        $creationDate
       );
+
+      if(array_key_exists("author_username",$post)) {
+        $postsObjects->setAuthorUsername($post["author_username"]);
+      }
 
       $posts[$key] = $postsObjects;
     }
@@ -72,8 +87,10 @@ class blogManager
 
 
 
-
-  /*carica sul nostro database il nuovo users [],(users di array di istanze user) su file json */
+  /**
+  *@return void
+  * carica sul nostro database il nuovo users [],(users di array di istanze user) su file json
+  */
   private function updatePosts(array $posts) {
 
     $postPathAbsolute = $this->getPostsPathAbsolute();
@@ -83,7 +100,9 @@ class blogManager
     foreach ($posts as $post) {
       $output[] = [
         "title" => $post->getTitle(),
-        "content" => $post->getContent()
+        "content" => $post->getContent(),
+        "author_username" => $post->getAuthorUsername(),
+        "creation_date" => $post->getCreationDate()->format("Y-m-d H:i:s")
       ];
 
     }
@@ -91,4 +110,15 @@ class blogManager
     file_put_contents($postPathAbsolute, json_encode($output));
   }
 
+
+
+
+
+    /*prende la path assoluta del posts.json*/
+    public function getPostsPathAbsolute() {
+      $root = $_SERVER["DOCUMENT_ROOT"];
+      $postPath = sprintf('%s/websiteExPhp/posts.json',$root);
+
+      return $postPath;
+    }
 }
