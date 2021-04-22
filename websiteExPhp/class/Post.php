@@ -8,11 +8,13 @@ class Post
   private $title;
   private $content;
   private $authorUsername;
+  private $creationDate;
 
-  public function __construct($title, $content)
+  public function __construct($title, $content, DateTime $creationDate)
   {
     $this->title = $title;
     $this->content = $content;
+    $this->creationDate = $creationDate;
   }
 
   public function getTitle(){
@@ -25,5 +27,12 @@ class Post
 
   public function getAuthorUsername() {
     return $this->authorUsername;
+  }
+  public function setAuthorUsername($username) {
+    $this->authorUsername = $username;
+  }
+
+  public function getCreationDate() {
+    return $this->creationDate;
   }
 }
