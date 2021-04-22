@@ -8,15 +8,20 @@
         <div class="container">
           <p>HOME</p>
             <?php foreach($blogManager->getPost() as $post): ?>
-              <div class="row">
+              <div class="row mt-5">
                 <div class="col-md-12">
-                  Title
+                  <?php echo $post->getTitle() ?>
                 </div>
                 <div class="col-md-12">
-                  Content
+                  <?php echo $post->getContent() ?>
                 </div>
+                <?php if ($post->getAuthorUsername() !== null): ?>
+                  <div class="col-md-12">
+                    Author: <?php echo $post->getAuthorUsername(); ?>
+                  </div>
+                <?php endif; ?>
                 <div class="col-md-12">
-                  Date
+                  Inserito il: <?php echo $post->getCreationDate()->format('Y-m-y H:i:s') ?>
                 </div>
               </div>
             <?php endforeach; ?>
