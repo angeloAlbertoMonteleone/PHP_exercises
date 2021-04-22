@@ -6,24 +6,27 @@ class userAuthentication
 {
 
   /**
-  return @bool
+  *@return bool
   *ritorna true se l`user e` loggato/autentificato*/
   public function userIsAuthenticated(): bool {
     return array_key_exists("username", $_SESSION);
   }
 
 
-public function getAuthenticatedUsername():string {
-  if(!$this->userIsAuthenticated()) {
-    throw new \Exception("L` utente non e` autenticato");
+  public function getAuthenticatedUsername():user {
+    if(!$this->userIsAuthenticated()) {
+      throw new \Exception("L` utente non e` autenticato");
+    }
+    $username = $_SESSION["username"];
+    
+    $userManager = new userManager();
+    return $userManager->findUserByUsername($username);
   }
-  return $_SESSION["username"];
-}
 
 
 
   /**
-  return @bool
+  *@return bool
   * - restituisce una stringa di errore se il login non e` andato a buon fine
   * restituisce true se il login e` andato a buon fine, controlla se l user esiste ritornando true
   */
@@ -57,9 +60,10 @@ public function getAuthenticatedUsername():string {
 
 
   /**
-  @param string $username
-  @param string $password
-  * funzione che registra l` utente, aggiungendo un nuovo array dentro ad users array */
+  *@param string $username
+  *@param string $password
+  * funzione che registra l` utente, aggiungendo un nuovo array dentro ad users array
+  */
   public function register(string $username,string $plainPassword):bool
   {
 
@@ -94,10 +98,8 @@ public function getAuthenticatedUsername():string {
 // funzione per cambiare password
 public function changePassword($oldPassword, $newPlainPassword):bool
 {
-
     $userManager = new userManager();
     $users = $userManager->loadUsersFromJson();
-
 
     $userManager->updatePassword($users, $_SESSION["username"], $oldPassword, $newPlainPassword);
 
