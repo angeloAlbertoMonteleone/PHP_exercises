@@ -5,14 +5,17 @@
 class user
 {
 
+  private $id;
   private $username;
   private $password;
+
   // private $passwordalgorithm;
 
-  public function __construct(string $username, string $password)
+  public function __construct($id, string $username, string $password)
   {
     $this->username = $username;
     $this->password = $password;
+    $this->id = $id;
     // $this->passwordalgorithm = $passwordalgorithm;
   }
 
@@ -22,6 +25,10 @@ class user
 
   public function getPassword() {
     return $this->password;
+  }
+
+  public function getId() {
+    return $this->id;
   }
 
   //
