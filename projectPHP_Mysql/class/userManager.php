@@ -1,28 +1,16 @@
 <?php
 
 require_once "user.php";
+require_once "DatabaseManager.php";
 
 class userManager
 {
 
+private $databaseManager;
 
-
-/**
-*@return $connection
-*funzione che fa una richiesta a mysql,e che ritorna una connessione PDO
-*/
-
-private function getConnection() {
-  try {
-    $connection = new PDO('mysql:host=localhost;dbname=usersdb', "root", "root");
-    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-    print "Error!: " . $e->getMessage() . "<br/>";
-    die();
-  }
-  return $connection;
+function __construct() {
+    $this->databaseManager = new DatabaseManager();
 }
-
 
 
 
@@ -33,7 +21,7 @@ public function addUserInDb(string $username, string $plainPassword) {
       // prendo una connessione al database
 
       // chiamo una query "INSERT INTO ..."
-      $connection = $this->getConnection();
+      $connection = $this->databaseManager->getConnection();
 
       $cryptedPassword = $this->cryptPasswordWithAlgorithm($plainPassword);
 
@@ -91,7 +79,7 @@ public function findUser(string $username, string $plainPassword): user
 public function findUserByUsername(string $username): user {
 
   // avviare una connessione
-  $connection = $this->getConnection();
+  $connection = $this->databaseManager->getConnection();
 
   // fare una query per selezionare l` user
   $query = "SELECT * FROM people WHERE username = '$username'";
@@ -109,6 +97,7 @@ public function findUserByUsername(string $username): user {
   // aggiungere i dati dell user, nell oggetto user
   if(count($users) > 0) {
     return new user(
+      $users[0]["id"],
       $users[0]["username"],
       $users[0]["password"]
     );
@@ -145,7 +134,7 @@ public function updatePassword($username, string $oldPassword, string $newPlainP
 public function updateUser(user $user)
 {
   // aggiornare la riga in database corrispondente all` user con username = user-getUsername()
-  $connection = $this->getConnection();
+  $connection = $this->databaseManager->getConnection();
 
   $username = $user->getUsername();
   $encryptedPassword = $user->getPassword();
