@@ -32,6 +32,10 @@
                 SCRIVI POST
               </a>
 
+              <a class="nav-link" href="post-index.php">
+                I MIEI POSTS
+              </a>
+
             <?php else: ?>
               <a class="nav-link" href="login.php">
                 LOGIN
