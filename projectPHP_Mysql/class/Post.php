@@ -5,6 +5,7 @@
  */
 class Post
 {
+  private $id;
   private $title;
   private $content;
   private $authorUsername;
@@ -34,5 +35,13 @@ class Post
 
   public function getCreationDate() {
     return $this->creationDate;
+  }
+
+  public function getId() {
+    return $this->id;
+  }
+
+  public function setId($id) {
+    $this->id = $id;
   }
 }
