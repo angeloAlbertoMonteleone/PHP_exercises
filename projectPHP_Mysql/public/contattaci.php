@@ -7,9 +7,10 @@
 
 <?php if($_SERVER["REQUEST_METHOD"] === "POST") {
   $message = $_POST["message"];
-  if(!empty($message)) {
+  if(empty($message) === false) {
     $emailIsSent = mail('angeloalbertomnt@gmail.com', 'saluto', sprintf('qualcuno di ha scritto: "%s"',$message));
     printLog(sprintf("L`utente %s ha inviato un email"), $_SESSION["username"]);
+
 
   }
 }
