@@ -8,6 +8,7 @@ class user
   private $id;
   private $username;
   private $password;
+  private $enabled = false;
 
   // private $passwordalgorithm;
 
@@ -44,5 +45,12 @@ class user
   //   $this->passwordalgorithm = $algorithm;
   // }
 
+  public function getEnabled() {
+    return $this->enabled;
+  }
+
+  public function setEnabled($enabled) {
+    $this->enabled = $enabled;
+  }
 
 }
