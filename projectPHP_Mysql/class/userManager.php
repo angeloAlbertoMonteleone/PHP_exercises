@@ -16,8 +16,11 @@ function __construct() {
 
 
 
-/*memorizza l` user in database*/
-public function addUserInDb(string $username, string $plainPassword) {
+/**
+*@return user
+*memorizza l` user in database*/
+public function addUserInDb(string $username, string $plainPassword, bool $enabled = false):user
+{
       // prendo una connessione al database
 
       // chiamo una query "INSERT INTO ..."
@@ -25,15 +28,14 @@ public function addUserInDb(string $username, string $plainPassword) {
 
       $cryptedPassword = $this->cryptPasswordWithAlgorithm($plainPassword);
 
-      $query = "INSERT INTO people (username, password) VALUES ('$username', '$cryptedPassword')";
+      $query = "INSERT INTO usersdb.people (username, password, enabled) VALUES (:username, :cryptedPassword, :enabled)";
 
-      try {
-        $statement = $connection->query($query);
-      } catch (\Exception $e) {
-        print "Error!: " . $e->getMessage() . "<br/>";
-        die();
-      }
+      $result = $this->databaseManager->executeQuery($query,
+      ['username' => $username,
+       'cryptedPassword' => $cryptedPassword,
+      'enabled' => ($enabled === true) ? 1 : 0]);
 
+      return $this->findUserByUsername($username);
 }
 
 
@@ -51,13 +53,23 @@ public function getUsersPathAbsolute() {
 }
 
 
+/**
+*@return array
+*funzione che trova gli users nel database e ritorna un array di users*/
+public function loadUsers():array
+{
+  $query = "SELECT * FROM usersdb.people";
+  $users = $this->databaseManager->executeQuery($query);
+
+  return $users;
+}
+
 
 
 
 /**
 *@return user
 *funzione che trova un user passando un username e password, e ritorna un oggetto user*/
-
 public function findUser(string $username, string $plainPassword): user
 {
   /* verifica se l utente esiste, se no lancia un eccezione*/
@@ -76,30 +88,25 @@ public function findUser(string $username, string $plainPassword): user
 *@return user
 *funzione che trova un user da un username passato come parametro, e ritorna un oggetto user*/
 
-public function findUserByUsername(string $username): user {
-
+public function findUserByUsername(string $username): user
+{
   // avviare una connessione
   $connection = $this->databaseManager->getConnection();
 
   // fare una query per selezionare l` user
-  $query = "SELECT * FROM people WHERE username = '$username'";
-
-  try {
-    $statement = $connection->query($query, PDO::FETCH_ASSOC);
-  } catch (\Exception $e) {
-    print "Error!: " . $e->getMessage() . "<br/>";
-    die();
-  }
+  $query = "SELECT * FROM usersdb.people WHERE username = :username";
 
   // fare il fetch del risultato della query
-  $users = $statement->fetchAll();
+  $result = $this->databaseManager->executeQuery($query,
+  ['username' => $username]);
+
 
   // aggiungere i dati dell user, nell oggetto user
-  if(count($users) > 0) {
+  if(count($result) > 0) {
     return new user(
-      $users[0]["id"],
-      $users[0]["username"],
-      $users[0]["password"]
+      $result[0]["id"],
+      $result[0]["username"],
+      $result[0]["password"]
     );
   }
 
@@ -111,7 +118,7 @@ public function findUserByUsername(string $username): user {
 
 /* aggiorna la password analizzando l array e passando la nuova password*/
 
-public function updatePassword($username, string $oldPassword, string $newPlainPassword)
+public function updatePassword($username, string $oldPassword, string $newPlainPassword):void
 {
       $user = $this->findUser($username, $oldPassword);
 
@@ -130,8 +137,7 @@ public function updatePassword($username, string $oldPassword, string $newPlainP
 
 
 /* funzione che fa l update dell user nell array, prima di passare (l array) ad updateUsersFile*/
-
-public function updateUser(user $user)
+public function updateUser(user $user):void
 {
   // aggiornare la riga in database corrispondente all` user con username = user-getUsername()
   $connection = $this->databaseManager->getConnection();
@@ -139,23 +145,19 @@ public function updateUser(user $user)
   $username = $user->getUsername();
   $encryptedPassword = $user->getPassword();
 
-  $query = "UPDATE people SET username = '$username', password = '$encryptedPassword' WHERE username = '$username'";
+  $query = "UPDATE usersdb.people SET username = :username, password = :encryptedPassword WHERE username = :username";
 
-  try {
-    $statement = $connection->query($query, PDO::FETCH_ASSOC);
-  } catch (\Exception $e) {
-    print "Error!: " . $e->getMessage() . "<br/>";
-    die();
-  }
-
+  $result = $this->databaseManager->executeQuery($query,
+  ['username' => $username,
+   'encryptedPassword' => $encryptedPassword]);
   }
 
 
 
 
 // funzione che cripta la password in base all` algortimo della password posseduta dall` utente
-
-private function cryptPassword($password, $algorithm) {
+private function cryptPassword($password, $algorithm)
+{
   if($algorithm === "md5") {
     return md5($password);
   }
