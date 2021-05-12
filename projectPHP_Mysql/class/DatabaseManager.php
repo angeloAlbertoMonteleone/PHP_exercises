@@ -11,7 +11,7 @@ class DatabaseManager
   */
   public function getConnection() {
     try {
-      $connection = new PDO('mysql:host=localhost;dbname=usersdb', "root", "root");
+      $connection = new PDO('mysql:host=localhost;dbname=posts', "root", "root");
       $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
       } catch (PDOException $e) {
       print "Error!: " . $e->getMessage() . "<br/>";
@@ -21,16 +21,26 @@ class DatabaseManager
   }
 
 
-  public function executeQuery($query) {
+  /**
+  *@return array
+  *@param array $params
+  *funzione che fa una connessione PDO,e che esegue una query ritornando un obj
+  */
+  public function executeQuery(string $query, array $params = []): array
+  {
+
     $connection = $this->getConnection();
 
     try {
-      $statement = $connection->query($query);
+      $statement = $connection->prepare($query);
+      $statement->execute($params);
     } catch (\Exception $e) {
       print "Error!: " . $e->getMessage() . "<br/>";
-      die();
+      die;
     }
-  }
 
+    $result = $statement->fetchAll(PDO::FETCH_ASSOC);
+    return $result;
+  }
 
 }
