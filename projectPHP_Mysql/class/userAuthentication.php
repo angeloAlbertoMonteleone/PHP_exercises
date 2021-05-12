@@ -14,7 +14,7 @@ class userAuthentication
 
 
   public function getAuthenticatedUsername():user {
-    if(!$this->userIsAuthenticated()) {
+    if($this->userIsAuthenticated() === false) {
       throw new \Exception("L` utente non e` autenticato");
     }
     $username = $_SESSION["username"];
@@ -71,27 +71,49 @@ class userAuthentication
       throw new \Exception("Inserire una password piu` lunga!");
     }
 
-    $userManager = new userManager();
-    $usersFromJson = $userManager->loadUsersFromJson();
-
-    foreach ($usersFromJson as $user) {
-      if($user->getUsername() === $username) {
-        throw new \Exception("Username gia` esistente, prova con un altro!");
-      }
+    if(strpos($username, '@') === false) {
+      throw new \Exception("Inserire un\' email valida");
     }
 
-      $userManager->addUserInDb(
-        $username,
-        $plainPassword
-        );
+    $userManager = new userManager();
+    /**
+     * se l'utente esiste già, lancia un'eccezione
+     */
+    try {
+        $userFoundInDatabase = $userManager->findUserByUsername($username);
+    } catch (Exception $exception) {
+        $userFoundInDatabase = null;
+    }
 
-        printLog("L`utente ha effettuato la registrazione");
+    if ($userFoundInDatabase !== null) {
+        throw new Exception('Utente già esistente');
+    }
+
+
+    $user = $userManager->addUserInDb(
+      $username,
+      $plainPassword,
+      false
+      );
+
+
+    $email = $this->sendConfirmationEmail($user);
+
+    $userManager->printLog("L`utente ha effettuato la registrazione");
 
     return true;
 
   }
 
 
+public function sendConfirmationEmail(user $user):void
+{
+  $recipient = $user->getUsername();
+  $header = "MIME-Version: 1.0 \r\n";
+  $header .= 'Content-Type: text/plain; charset=utf-8' . "\r\n";
+  $message = "Conferma la tua email su questo link";
+  mail($recipient, "Conferma la tua registrazione", $message, $header);
+}
 
 
 
