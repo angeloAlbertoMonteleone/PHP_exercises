@@ -36,8 +36,11 @@ $postByAuthor = $blogManager->getPostsByAuthor($_SESSION["username"]);
                 </div>
 
                 <div class="col-md-12">
-                  <a class="btn btn-success"href="post-edit.php">
+                  <a class="btn btn-success"href="post-edit.php?id=<?php echo $post->getId()?>">
                     MODIFICA
+                  </a>
+                  <a class="btn btn-danger"href="post-delete.php?id=<?php echo $post->getId()?>">
+                    DELETE
                   </a>
                 </div>
               </div>
