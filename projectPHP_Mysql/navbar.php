@@ -33,7 +33,7 @@
               </a>
 
               <a class="nav-link" href="post-index.php">
-                I MIEI POSTS
+                GESTISCI POSTS
               </a>
 
             <?php else: ?>
