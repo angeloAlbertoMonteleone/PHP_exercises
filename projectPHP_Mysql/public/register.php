@@ -41,6 +41,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST") {
                 </p>
               <?php endif; ?>
 
+
               <?php if ($registrationIsSuccessful === true):?>
                 La registrazione si e` conclusa! Clicca sul link di conferma
 
