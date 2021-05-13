@@ -15,7 +15,6 @@ function __construct() {
 
 
 
-
 /**
 *@return user
 *memorizza l` user in database*/
@@ -23,8 +22,8 @@ public function addUserInDb(string $username, string $plainPassword, bool $enabl
 {
       // prendo una connessione al database
 
+      // $connection = $this->databaseManager->getConnection();
       // chiamo una query "INSERT INTO ..."
-      $connection = $this->databaseManager->getConnection();
 
       $cryptedPassword = $this->cryptPasswordWithAlgorithm($plainPassword);
 
@@ -33,7 +32,8 @@ public function addUserInDb(string $username, string $plainPassword, bool $enabl
       $result = $this->databaseManager->executeQuery($query,
       ['username' => $username,
        'cryptedPassword' => $cryptedPassword,
-      'enabled' => ($enabled === true) ? 1 : 0]);
+       'enabled' => ($enabled === true) ? 1 : 0
+     ]);
 
       return $this->findUserByUsername($username);
 }
@@ -51,6 +51,8 @@ public function getUsersPathAbsolute() {
 
   return $userPath;
 }
+
+
 
 
 /**
@@ -84,22 +86,22 @@ public function findUser(string $username, string $plainPassword): user
 
 
 
+
+
 /**
 *@return user
 *funzione che trova un user da un username passato come parametro, e ritorna un oggetto user*/
-
 public function findUserByUsername(string $username): user
 {
   // avviare una connessione
-  $connection = $this->databaseManager->getConnection();
+  // $connection = $this->databaseManager->getConnection();
 
   // fare una query per selezionare l` user
   $query = "SELECT * FROM usersdb.people WHERE username = :username";
 
   // fare il fetch del risultato della query
-  $result = $this->databaseManager->executeQuery($query,
+  $result = $this->databaseManager->executeSelectQuery($query,
   ['username' => $username]);
-
 
   // aggiungere i dati dell user, nell oggetto user
   if(count($result) > 0) {
@@ -110,8 +112,33 @@ public function findUserByUsername(string $username): user
     );
   }
 
-  throw new \Exception("Username non trovato");
+  throw new \Exception(sprintf("Username con l` username %s non e` stato trovato", $username));
 }
+
+
+
+
+public function findUserById(int $id)
+{
+  // fare una query per selezionare l` user
+  $query = "SELECT * FROM usersdb.people WHERE id = :id";
+
+  $result = $this->databaseManager->executeSelectQuery($query,
+  ['id' => $id]);
+
+  // aggiungere i dati dell user, nell oggetto user
+  if(count($result) > 0) {
+    return new user(
+      $result[0]["id"],
+      $result[0]["username"],
+      $result[0]["password"]
+    );
+  }
+
+  throw new \Exception(sprintf("Username con l` id %s non e` stato trovato", $id));
+}
+
+
 
 
 
@@ -144,12 +171,15 @@ public function updateUser(user $user):void
 
   $username = $user->getUsername();
   $encryptedPassword = $user->getPassword();
+  $enabled = $user->getEnabled();
 
-  $query = "UPDATE usersdb.people SET username = :username, password = :encryptedPassword WHERE username = :username";
+  $query = "UPDATE usersdb.people SET username = :username, password = :encryptedPassword, enabled = :enabled WHERE username = :username";
 
   $result = $this->databaseManager->executeQuery($query,
   ['username' => $username,
-   'encryptedPassword' => $encryptedPassword]);
+   'encryptedPassword' => $encryptedPassword,
+   'enabled' => ($enabled === true) ? 1 : 0
+  ]);
   }
 
 
@@ -169,6 +199,20 @@ private function cryptPassword($password, $algorithm)
 
 
 
+// funzione che mi ritorna un obj di tipo user, e mi setta evenutualmente utente abilitato
+public function buildUserFromSingleResult(array $result):user
+ {
+  $user = new user(
+    $result[0]["id"],
+    $result[0]["username"],
+    $result[0]["password"]
+  );
+
+  if($result["enabled"] === '1'){
+    $user->setEnabled(true);
+  }
+  return $user;
+}
 
 
 // funzione che crypta la password dell` utente e aggiunge un suo algoritmo;

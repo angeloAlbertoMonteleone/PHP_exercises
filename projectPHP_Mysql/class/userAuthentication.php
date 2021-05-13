@@ -4,48 +4,53 @@ require_once "userManager.php";
 
 class userAuthentication
 {
+  private $userManager;
+
+
+  function __construct() {
+    $this->userManager = new userManager();
+  }
+
+
 
   /**
   *@return bool
   *ritorna true se l`user e` loggato/autentificato*/
-  public function userIsAuthenticated(): bool {
+  public function userIsAuthenticated(): bool
+  {
     return array_key_exists("username", $_SESSION);
   }
 
 
-  public function getAuthenticatedUsername():user {
+
+  /**
+  *@return user
+  *ritorna l user tramite l username*/
+  public function getAuthenticatedUsername():user
+  {
     if($this->userIsAuthenticated() === false) {
       throw new \Exception("L` utente non e` autenticato");
     }
     $username = $_SESSION["username"];
 
-    $userManager = new userManager();
-    return $userManager->findUserByUsername($username);
+    return $this->userManager->findUserByUsername($username);
   }
 
 
 
   /**
   *@return bool
+  fare un double check, dopo aver fatto il set up di php mail, per fare il controllo dell enable
   * - restituisce una stringa di errore se il login non e` andato a buon fine
   * restituisce true se il login e` andato a buon fine, controlla se l user esiste ritornando true
   */
   public function login(string $username, string $password): bool
   {
+        $user = $this->userManager->findUser($username, $password);
+        // if($user->getEnabled() !== true) {
+        //   throw new \Exception("utente non trovato");
+        // }
 
-      $userManager = new userManager();
-      // users recuperati dal file users.csv
-      // $users = loadUsers();
-
-      $user = $userManager->findUser($username, $password);
-
-      // users recuperati dal file users.json
-      // $users = $userManager->loadUsersFromJson();
-      // if($users === $usersFromJson) {
-      //   var_dump(true);die;
-      // }
-
-        // imposto una variabile di sessione
         $_SESSION["username"] = $user->getUsername();
 
         // scrivo un log
@@ -55,6 +60,7 @@ class userAuthentication
       //     throw new \Exception(sprintf("La password non e` corretta, riprova!"));
       // }
   }
+
 
 
 
@@ -75,54 +81,74 @@ class userAuthentication
       throw new \Exception("Inserire un\' email valida");
     }
 
-    $userManager = new userManager();
     /**
      * se l'utente esiste già, lancia un'eccezione
      */
     try {
-        $userFoundInDatabase = $userManager->findUserByUsername($username);
-    } catch (Exception $exception) {
+        $userFoundInDatabase = $this->userManager->findUserByUsername($username);
+    } catch (\Exception $exception) {
         $userFoundInDatabase = null;
     }
 
     if ($userFoundInDatabase !== null) {
-        throw new Exception('Utente già esistente');
+        throw new \Exception('Utente già esistente');
     }
 
-
-    $user = $userManager->addUserInDb(
+    $user = $this->userManager->addUserInDb(
       $username,
       $plainPassword,
       false
       );
 
+    $this->sendConfirmationEmail($user);
 
-    $email = $this->sendConfirmationEmail($user);
-
-    $userManager->printLog("L`utente ha effettuato la registrazione");
+    $this->userManager->printLog("L`utente ha effettuato la registrazione");
 
     return true;
 
   }
 
 
+
+// funzione che manda un email di conferma di regristazione
 public function sendConfirmationEmail(user $user):void
 {
   $recipient = $user->getUsername();
   $header = "MIME-Version: 1.0 \r\n";
-  $header .= 'Content-Type: text/plain; charset=utf-8' . "\r\n";
+  $header .= 'Content-Type: text/html; charset=utf-8' . "\r\n";
+
+  $url = sprintf('%s/confirm-registration.php?userId=%s', $_SERVER["HTTP_ORIGIN"], $user->getId());
   $message = "Conferma la tua email su questo link";
+
   mail($recipient, "Conferma la tua registrazione", $message, $header);
 }
+
+
+
+
+public function enableUser(int $userId)
+{
+  $user = $this->userManager->findUserById($userId);
+
+  if($user->getEnabled === true) {
+    throw new \Exception("utente gia` abilitato");
+  }
+
+  $user->setEnable(true);
+
+  $this->userManager->updateUser($user);
+}
+
+
+
 
 
 
 // funzione per cambiare password
 public function changePassword($oldPassword, $newPlainPassword):bool
 {
-    $userManager = new userManager();
 
-    $userManager->updatePassword($_SESSION["username"], $oldPassword, $newPlainPassword);
+    $this->userManager->updatePassword($_SESSION["username"], $oldPassword, $newPlainPassword);
 
     return true;
 }

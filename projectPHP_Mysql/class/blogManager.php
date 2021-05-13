@@ -37,7 +37,7 @@ function __construct() {
   {
     $queryPost = "SELECT * FROM usersdb.post WHERE id = :id";
 
-    $results = $this->databaseManager->executeQuery($queryPost,
+    $results = $this->databaseManager->executeSelectQuery($queryPost,
     ['id' => $id]);
 
     if(count($results) < 1) {
@@ -85,8 +85,10 @@ function __construct() {
     'postContent' => $postContent,
     'creationDate' => $creationDate,
     'userId'=> $userId]);
+
     return $post;
   }
+
 
 
 
@@ -108,8 +110,8 @@ function __construct() {
       print "Error!: " . $e->getMessage() . "<br/>";
       die();
     }
-
     $posts = $statement->fetchAll();
+
     $output = [];
     foreach ($posts as $key => $post) {
       $creationDate = DateTime::createFromFormat("Y-m-d H:i:s", $post["publication_date"]);
@@ -127,6 +129,7 @@ function __construct() {
 
 
 
+
   /**
   *@param user
   *@param post
@@ -138,7 +141,7 @@ function __construct() {
     $postId = $post->getId();
 
     $queryPostId = "SELECT * FROM usersdb.post WHERE id = :postId";
-    $result = $this->databaseManager->executeQuery($queryPostId,
+    $result = $this->databaseManager->executeSelectQuery($queryPostId,
     ['postId' => $postId]);
 
     if((int)$userId === (int)$result[0]["users_id"]) {
@@ -148,6 +151,8 @@ function __construct() {
     }
 
   }
+
+
 
 
   public function deletePostafterCondiction($postId):void
@@ -186,7 +191,7 @@ function __construct() {
 
     $query = "SELECT * FROM usersdb.post_and_authors WHERE username = :username ORDER BY publication_date DESC";
 
-    $result = $this->databaseManager->executeQuery($query,
+    $result = $this->databaseManager->executeSelectQuery($query,
     [  'username' => $username  ] );
 
     return $this->buildPostbySelectedResults($result);

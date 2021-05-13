@@ -1,8 +1,9 @@
-<?php require_once("../common.php"); ?>
+<?php require_once "../common.php" ;
 
-<?php
+
 $registrationIsSuccessful = false;
 $error = false;
+
 // instanzio le credenziali degli utenti, username e password, e salvo in una variabile di sessione l username, per utilizzarlo nel mio HTML
 if($_SERVER["REQUEST_METHOD"] === "POST") {
   $error = false;
@@ -13,14 +14,14 @@ if($_SERVER["REQUEST_METHOD"] === "POST") {
     $registrationIsSuccessful = false;
   }
 
-  if($registrationIsSuccessful === true) {
-    try {
-      $authenticationProvider->login($_POST["username"],$_POST["password"]);
-    } catch (\Exception $e) {
-
-    }
-    return header("location: homepage.php");
-  }
+  // if($registrationIsSuccessful === true) {
+  //   try {
+  //     $authenticationProvider->login($_POST["username"],$_POST["password"]);
+  //   } catch (\Exception $e) {
+  //
+  //   }
+  //   return header("location: homepage.php");
+  // }
 
 }
 ?>
@@ -40,24 +41,26 @@ if($_SERVER["REQUEST_METHOD"] === "POST") {
                 </p>
               <?php endif; ?>
 
-              <form action="register.php" method="POST">
-                  <!-- <?php if ($registrationIsSuccessful === true):?>
-                    <p>Sei registrato!</p>
-                  <?php endif; ?> -->
+              <?php if ($registrationIsSuccessful === true):?>
+                La registrazione si e` conclusa! Clicca sul link di conferma
+
+              <?php else: ?>
+                <form action="register.php" method="POST">
 
 
-                <div class="mb-3">
-                  <label for="exampleInputEmail1" class="form-label">Username</label>
-                  <input type="username" name="username" class="form-control" id="exampleInputUsername">
-                </div>
+                  <div class="mb-3">
+                    <label for="exampleInputEmail1" class="form-label">Username</label>
+                    <input type="username" name="username" class="form-control" id="exampleInputUsername">
+                  </div>
 
-                <div class="mb-3">
-                  <label for="exampleInputPassword1" class="form-label">Password</label>
-                  <input type="password" name="password" class="form-control" id="exampleInputPassword1">
-                </div>
+                  <div class="mb-3">
+                    <label for="exampleInputPassword1" class="form-label">Password</label>
+                    <input type="password" name="password" class="form-control" id="exampleInputPassword1">
+                  </div>
 
-                <button type="submit" class="btn btn-primary">Register</button>
-              </form>
+                  <button type="submit" class="btn btn-primary">Register</button>
+                </form>
+              <?php endif; ?>
             </div>
           </div>
         </div>
