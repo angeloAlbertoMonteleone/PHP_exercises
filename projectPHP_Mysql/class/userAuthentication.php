@@ -135,6 +135,7 @@ public function enableUser(int $userId)
   }
 
   $user->setEnable(true);
+  
 
   $this->userManager->updateUser($user);
 }
