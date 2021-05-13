@@ -208,6 +208,7 @@ public function buildUserFromSingleResult(array $result):user
     $result[0]["password"]
   );
 
+
   if($result["enabled"] === '1'){
     $user->setEnabled(true);
   }
